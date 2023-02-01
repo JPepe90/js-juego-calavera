@@ -1,0 +1,56 @@
+body {
+    width: 100%;
+    background-color: coral;
+    margin: 0;
+    padding: 0;
+}
+
+.game-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    height: 100vh;
+    width: 100vw;
+}
+
+canvas {
+    border-width: 20px;
+    background-color:honeydew;
+    border-color: black;
+}
+
+.btns {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    width: 100%;
+}
+
+button {
+    background-color: cadetblue;
+    font-size: small;
+    border-radius: 10px;
+    margin: 0 10px;
+}
+
+.messages {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+p {
+    display: block;
+    margin: 0;
+    width: 100%;
+}
+
+.messages {
+    font-size: medium;
+}
+
+@media (max-width: 440px) {
+    button { margin-top: 25px; }
+    #arriba, #abajo, #izquierda, #derecha { margin-left: 100%; margin-right: 100%; }
+}
