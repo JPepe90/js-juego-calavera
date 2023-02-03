@@ -6,7 +6,7 @@ const btnLeft = document.querySelector('#izquierda');
 const btnRight = document.querySelector('#derecha');
 
 let canvasSize;
-let playerPos = [];
+let playerPos = [0,9];
 let cElem;
 let mapaActual = 0;
 
@@ -46,7 +46,6 @@ function canvasResize() {
 
 function startGame() {
     cElem = (canvasSize/10) - 1;
-
     game.font = cElem + 'px Verdana';
     const filasArray = maps[mapaActual].split("\n");
 
@@ -54,19 +53,28 @@ function startGame() {
         let fila = filasArray[i];
         for (let j = 0; j < 10; j++) {
             game.fillText(emojis[fila[j]], cElem * (0 + j), (cElem * (1 + i)) - 2, cElem);
-            if (fila[j] == 'O') {
-                playerPos = [j,i];
-            }
         }
     } 
-
-    iniciarJugador();
+    moverJugador();
 }
 
-function iniciarJugador() {
+function moverJugador() {
     game.fillText(emojis['PLAYER'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);
 }
 
+function bombCollision() {
+    const colision = playerPos;
+    game.clearRect(0, 0, canvasSize, canvasSize);
+    mapaActual = 0;
+    playerPos = [0,9];
+    startGame();
+
+    game.fillText(emojis['BOMB_COLLISION'], cElem * colision[0], (cElem * (1 + colision[1])) - 2, cElem);
+}
+
+function winLevel() {
+    game.fillText(emojis['WIN'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);
+}
 
 function moveUp() {
     // Detectar si hay posicion superiori o si la posicion superior es una bomba 
@@ -77,16 +85,14 @@ function moveUp() {
 
         if (mapRowCols[playerPos[1]][playerPos[0]] == 'X') {
             // BOMB COLLISION 
-            game.fillText(emojis['BOMB_COLLISION'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);
-            mapaActual = 0;
+            bombCollision();
         } else if (mapRowCols[playerPos[1]][playerPos[0]] == 'I') {
             // WIN, GO TO NEXT LEVEL AFTER A FEW SEC OR RESTART IF LAST MAP
-            game.fillText(emojis['WIN'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);
-
+            winLevel()
             nextMapLoad();
         } else {
-            game.clearRect(cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem, cElem + 10);
-            game.fillText(emojis['PLAYER'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);  
+            game.clearRect(0, 0, canvasSize, canvasSize);
+            startGame();
         }
     }
 }
@@ -99,16 +105,14 @@ function moveDown() {
 
         if (mapRowCols[playerPos[1]][playerPos[0]] == 'X') {
             // BOMB COLLISION 
-            game.fillText(emojis['BOMB_COLLISION'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);
-            mapaActual = 0;
+            bombCollision();
         } else if (mapRowCols[playerPos[1]][playerPos[0]] == 'I') {
             // WIN, GO TO NEXT LEVEL AFTER A FEW SEC OR RESTART IF LAST MAP
-            game.fillText(emojis['WIN'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);
-
+            winLevel()
             nextMapLoad();
         } else {
-            game.clearRect(cElem * playerPos[0], (cElem * (playerPos[1] - 1)) - 2, cElem, cElem + 10);
-            game.fillText(emojis['PLAYER'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);  
+            game.clearRect(0, 0, canvasSize, canvasSize);
+            startGame();
         }
     }
 }
@@ -121,16 +125,14 @@ function moveLeft() {
 
         if (mapRowCols[playerPos[1]][playerPos[0]] == 'X') {
             // BOMB COLLISION 
-            game.fillText(emojis['BOMB_COLLISION'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);
-            mapaActual = 0;
+            bombCollision();
         } else if (mapRowCols[playerPos[1]][playerPos[0]] == 'I') {
             // WIN, GO TO NEXT LEVEL AFTER A FEW SEC OR RESTART IF LAST MAP
-            game.fillText(emojis['WIN'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);
-            
+            winLevel()
             nextMapLoad();
         } else {
-            game.clearRect(cElem * (playerPos[0] + 1), (cElem * (playerPos[1])) - 2, cElem, cElem + 10);
-            game.fillText(emojis['PLAYER'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);  
+            game.clearRect(0, 0, canvasSize, canvasSize);
+            startGame();
         }
     }
 }
@@ -143,23 +145,22 @@ function moveRight() {
 
         if (mapRowCols[playerPos[1]][playerPos[0]] == 'X') {
             // BOMB COLLISION 
-            game.fillText(emojis['BOMB_COLLISION'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);
-            mapaActual = 0;
+            bombCollision();
         } else if (mapRowCols[playerPos[1]][playerPos[0]] == 'I') {
             // WIN, GO TO NEXT LEVEL AFTER A FEW SEC OR RESTART IF LAST MAP
-            game.fillText(emojis['WIN'], cElem * playerPos[0], (canvasElemet * (1 + playerPos[1])) - 2, cElem);
-
+            winLevel()
             nextMapLoad();
         } else {
-            game.clearRect(cElem * (playerPos[0] - 1), (cElem * (playerPos[1])) - 2, cElem, cElem + 10);
-            game.fillText(emojis['PLAYER'], cElem * playerPos[0], (cElem * (1 + playerPos[1])) - 2, cElem);  
+            game.clearRect(0, 0, canvasSize, canvasSize);
+            startGame();
         }
     }
 }
 
 function nextMapLoad() {
-    if (mapaActual == maps.length) {
+    if (mapaActual == maps.length-1) {
         mapaActual = 0;
+        playerPos = [0,9];
     } else {
         mapaActual++;
     }
