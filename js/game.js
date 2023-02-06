@@ -4,13 +4,30 @@ const btnUp = document.querySelector('#arriba');
 const btnDown = document.querySelector('#abajo');
 const btnLeft = document.querySelector('#izquierda');
 const btnRight = document.querySelector('#derecha');
+const vidas = document.querySelector('#vidas');
+const tiempo = document.querySelector('#tiempo');
+const record = document.querySelector('#record');
 
 let canvasSize;
 let playerPos = [0,9];
 let cElem;
 let mapaActual = 0;
+let vidasPlayer = 3;
+let timeStart;
+let timeInterval;
+let timePlayer;
+let recordSaved;
+
+if (localStorage.getItem('recordCalavera')) {
+    recordSaved = localStorage.getItem('recordCalavera');
+} else {
+    recordSaved = 20000;
+    localStorage.setItem('recordCalavera', recordSaved);
+}
+record.innerText = String(recordSaved);
 
 // ----- EVENTOS ----- //
+loadVidas();
 window.addEventListener('load', canvasResize);
 window.addEventListener('resize', canvasResize);
 btnUp.addEventListener('click', moveUp);
@@ -27,7 +44,11 @@ document.addEventListener('keydown', function(event) {
         moveRight();
     } else if (event.key === 'ArrowDown') {
         moveDown();
+    } else {
+        return;
     }
+
+    guardarInicioTiempo();
 });
 
 // ----- FUNCIONES ----- //
@@ -64,6 +85,7 @@ function moverJugador() {
 
 function bombCollision() {
     const colision = playerPos;
+    descontarVida();
     game.clearRect(0, 0, canvasSize, canvasSize);
     mapaActual = 0;
     playerPos = [0,9];
@@ -94,6 +116,8 @@ function moveUp() {
             game.clearRect(0, 0, canvasSize, canvasSize);
             startGame();
         }
+
+        guardarInicioTiempo();
     }
 }
 
@@ -114,6 +138,8 @@ function moveDown() {
             game.clearRect(0, 0, canvasSize, canvasSize);
             startGame();
         }
+
+        guardarInicioTiempo();
     }
 }
 
@@ -134,6 +160,8 @@ function moveLeft() {
             game.clearRect(0, 0, canvasSize, canvasSize);
             startGame();
         }
+
+        guardarInicioTiempo();
     }
 }
 
@@ -154,6 +182,8 @@ function moveRight() {
             game.clearRect(0, 0, canvasSize, canvasSize);
             startGame();
         }
+
+        guardarInicioTiempo();
     }
 }
 
@@ -161,9 +191,52 @@ function nextMapLoad() {
     if (mapaActual == maps.length-1) {
         mapaActual = 0;
         playerPos = [0,9];
+        lastWin();
     } else {
         mapaActual++;
     }
     game.clearRect(0, 0, canvasSize, canvasSize);
     startGame();
+}
+
+function descontarVida() {
+    vidasPlayer--;
+
+    if (vidasPlayer == 0) {
+        vidasPlayer = 3;
+        clearInterval(timeInterval);
+        timeStart = undefined; 
+    }
+
+    loadVidas();
+}
+
+function loadVidas() {
+    let stringVidas = '';
+    const arrayVidas = Array(vidasPlayer).fill(emojis['HEART']);
+    for (life of arrayVidas) { stringVidas += life }
+    vidas.innerText = stringVidas;
+}
+
+function guardarInicioTiempo() {
+    if (timeStart == undefined) {
+        timeStart = Date.now();
+        timeInterval = setInterval(showTime, 100);
+    }
+}
+
+function showTime() {
+    tiempo.innerText = String((Date.now() - timeStart) / 1000);
+}
+
+function lastWin() {
+    timePlayer = Date.now();
+    clearInterval(timeInterval);
+    const tiempoJugador = timePlayer - timeStart;
+
+    if (tiempoJugador < recordSaved) {
+        recordSaved = tiempoJugador;
+        localStorage.setItem('recordCalavera', recordSaved);
+        record.innerText = String(recordSaved / 1000);
+    }
 }
